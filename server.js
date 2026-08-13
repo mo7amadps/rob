@@ -57,6 +57,47 @@ app.post("/api/animation-ai/generate", async (req, res) => {
         contents: [{ role: "user", parts: [{ text: userPrompt }] }],
         generationConfig: {
           responseMimeType: "application/json",
+          responseSchema: {
+            type: "OBJECT",
+            properties: {
+              duration: { type: "NUMBER" },
+              fps: { type: "NUMBER" },
+              keyframes: {
+                type: "ARRAY",
+                items: {
+                  type: "OBJECT",
+                  properties: {
+                    time: { type: "NUMBER" },
+                    poses: {
+                      type: "ARRAY",
+                      items: {
+                        type: "OBJECT",
+                        properties: {
+                          joint: { type: "STRING" },
+                          position: {
+                            type: "ARRAY",
+                            items: { type: "NUMBER" },
+                            minItems: 3,
+                            maxItems: 3,
+                          },
+                          rotation: {
+                            type: "ARRAY",
+                            items: { type: "NUMBER" },
+                            minItems: 3,
+                            maxItems: 3,
+                          },
+                        },
+                        required: ["joint", "position", "rotation"],
+                      },
+                    },
+                  },
+                  required: ["time", "poses"],
+                },
+              },
+              notes: { type: "STRING" },
+            },
+            required: ["duration", "fps", "keyframes", "notes"],
+          },
           maxOutputTokens: 8192,
           thinkingConfig: { thinkingLevel: "low" },
         },
